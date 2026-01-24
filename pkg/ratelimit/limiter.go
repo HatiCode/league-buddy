@@ -14,7 +14,7 @@ type rule struct {
 
 // bucket tracks request timestamps for a single rule.
 type bucket struct {
-	rule      rule
+	rule       rule
 	timestamps []time.Time
 }
 
