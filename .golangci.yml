@@ -1,22 +1,19 @@
+version: "2"
+
 linters:
   enable:
     - errcheck
     - govet
     - staticcheck
     - unused
-
-linters-settings:
-  errcheck:
-    exclude-functions:
-      - (io.Closer).Close
-      - (net/http.ResponseWriter).Write
-      - (*encoding/json.Encoder).Encode
-      - (*testing.T).Errorf
-      - (*testing.T).Fatalf
-
-issues:
-  exclude-rules:
-    # Ignore unchecked errors in tests for Wait calls
-    - path: _test\.go
-      linters:
-        - errcheck
+  settings:
+    errcheck:
+      exclude-functions:
+        - (io.Closer).Close
+        - (net/http.ResponseWriter).Write
+        - (*encoding/json.Encoder).Encode
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - errcheck
