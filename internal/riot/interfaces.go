@@ -6,10 +6,14 @@ import (
 	"github.com/HatiCode/league-buddy/internal/models"
 )
 
+// AccountFetcher retrieves Riot account information.
+type AccountFetcher interface {
+	GetAccountByRiotID(ctx context.Context, region, gameName, tagLine string) (*models.Account, error)
+}
+
 // SummonerFetcher retrieves summoner information.
 type SummonerFetcher interface {
-	GetSummonerByName(ctx context.Context, region, name string) (*models.Summoner, error)
-	GetSummonerByPUUID(ctx context.Context, region, puuid string) (*models.Summoner, error)
+	GetSummonerByPUUID(ctx context.Context, platform, puuid string) (*models.Summoner, error)
 }
 
 // MatchFetcher retrieves match data.
@@ -26,6 +30,7 @@ type LeagueFetcher interface {
 // Client combines all Riot API capabilities.
 // Consumers should prefer the smaller interfaces when possible.
 type Client interface {
+	AccountFetcher
 	SummonerFetcher
 	MatchFetcher
 	LeagueFetcher

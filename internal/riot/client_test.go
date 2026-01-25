@@ -14,24 +14,20 @@ import (
 	"github.com/HatiCode/league-buddy/pkg/ratelimit"
 )
 
-// --- Summoner Fetcher Tests ---
+// --- Account Fetcher Tests ---
 
-func TestGetSummonerByName_Success(t *testing.T) {
-	expected := &models.Summoner{
-		ID:            "encrypted-summoner-id",
-		AccountID:     "encrypted-account-id",
-		PUUID:         "puuid-12345",
-		Name:          "Faker",
-		ProfileIconID: 4567,
-		SummonerLevel: 500,
+func TestGetAccountByRiotID_Success(t *testing.T) {
+	expected := &models.Account{
+		PUUID:    "puuid-12345",
+		GameName: "Faker",
+		TagLine:  "KR1",
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Verify request
 		if r.Method != http.MethodGet {
 			t.Errorf("expected GET, got %s", r.Method)
 		}
-		if r.URL.Path != "/lol/summoner/v4/summoners/by-name/Faker" {
+		if r.URL.Path != "/riot/account/v1/accounts/by-riot-id/Faker/KR1" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
 		if r.Header.Get("X-Riot-Token") == "" {
@@ -44,20 +40,23 @@ func TestGetSummonerByName_Success(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
-	summoner, err := client.GetSummonerByName(context.Background(), riot.PlatformEUW1, "Faker")
+	account, err := client.GetAccountByRiotID(context.Background(), riot.RegionAsia, "Faker", "KR1")
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if summoner.PUUID != expected.PUUID {
-		t.Errorf("expected PUUID %s, got %s", expected.PUUID, summoner.PUUID)
+	if account.PUUID != expected.PUUID {
+		t.Errorf("expected PUUID %s, got %s", expected.PUUID, account.PUUID)
 	}
-	if summoner.Name != expected.Name {
-		t.Errorf("expected Name %s, got %s", expected.Name, summoner.Name)
+	if account.GameName != expected.GameName {
+		t.Errorf("expected GameName %s, got %s", expected.GameName, account.GameName)
+	}
+	if account.TagLine != expected.TagLine {
+		t.Errorf("expected TagLine %s, got %s", expected.TagLine, account.TagLine)
 	}
 }
 
-func TestGetSummonerByName_NotFound(t *testing.T) {
+func TestGetAccountByRiotID_NotFound(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte(`{"status":{"message":"Data not found","status_code":404}}`))
@@ -65,14 +64,14 @@ func TestGetSummonerByName_NotFound(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
-	_, err := client.GetSummonerByName(context.Background(), riot.PlatformEUW1, "NonExistentPlayer12345")
+	_, err := client.GetAccountByRiotID(context.Background(), riot.RegionEurope, "NonExistent", "0000")
 
 	if err != riot.ErrNotFound {
 		t.Errorf("expected ErrNotFound, got %v", err)
 	}
 }
 
-func TestGetSummonerByName_Unauthorized(t *testing.T) {
+func TestGetAccountByRiotID_Unauthorized(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte(`{"status":{"message":"Unauthorized","status_code":401}}`))
@@ -80,12 +79,14 @@ func TestGetSummonerByName_Unauthorized(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("invalid-api-key", riot.WithBaseURL(server.URL))
-	_, err := client.GetSummonerByName(context.Background(), riot.PlatformEUW1, "Faker")
+	_, err := client.GetAccountByRiotID(context.Background(), riot.RegionEurope, "Faker", "KR1")
 
 	if err != riot.ErrUnauthorized {
 		t.Errorf("expected ErrUnauthorized, got %v", err)
 	}
 }
+
+// --- Summoner Fetcher Tests ---
 
 func TestGetSummonerByPUUID_Success(t *testing.T) {
 	expected := &models.Summoner{
@@ -127,7 +128,6 @@ func TestGetMatchIDs_Success(t *testing.T) {
 		if r.URL.Path != "/lol/match/v5/matches/by-puuid/puuid-12345/ids" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
-		// Verify count query param
 		if r.URL.Query().Get("count") != "5" {
 			t.Errorf("expected count=5, got %s", r.URL.Query().Get("count"))
 		}
@@ -161,7 +161,7 @@ func TestGetMatch_Success(t *testing.T) {
 		Info: models.MatchInfo{
 			GameDuration: 1800,
 			GameMode:     "CLASSIC",
-			QueueID:      420, // Ranked Solo
+			QueueID:      420,
 			Participants: []models.Participant{
 				{
 					PUUID:        "puuid-1",
@@ -251,7 +251,7 @@ func TestClient_RateLimited(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
-	_, err := client.GetSummonerByName(context.Background(), riot.PlatformEUW1, "Faker")
+	_, err := client.GetAccountByRiotID(context.Background(), riot.RegionEurope, "Test", "1234")
 
 	if err != riot.ErrRateLimited {
 		t.Errorf("expected ErrRateLimited, got %v", err)
@@ -262,7 +262,6 @@ func TestClient_RateLimited(t *testing.T) {
 
 func TestClient_ContextCancellation(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Simulate slow response
 		<-r.Context().Done()
 	}))
 	defer server.Close()
@@ -270,9 +269,9 @@ func TestClient_ContextCancellation(t *testing.T) {
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
 
 	ctx, cancel := context.WithCancel(context.Background())
-	cancel() // Cancel immediately
+	cancel()
 
-	_, err := client.GetSummonerByName(ctx, riot.PlatformEUW1, "Faker")
+	_, err := client.GetAccountByRiotID(ctx, riot.RegionEurope, "Test", "1234")
 
 	if err == nil {
 		t.Error("expected context cancellation error")
@@ -281,9 +280,9 @@ func TestClient_ContextCancellation(t *testing.T) {
 
 // --- Region Validation Tests ---
 
-func TestClient_InvalidRegion(t *testing.T) {
+func TestClient_InvalidPlatform(t *testing.T) {
 	client := riot.NewClient("test-api-key")
-	_, err := client.GetSummonerByName(context.Background(), "invalid-region", "Faker")
+	_, err := client.GetSummonerByPUUID(context.Background(), "invalid-platform", "puuid-123")
 
 	if err != riot.ErrInvalidRegion {
 		t.Errorf("expected ErrInvalidRegion, got %v", err)
@@ -297,7 +296,7 @@ func TestClient_WithRateLimiter(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestCount++
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(&models.Summoner{Name: "Test"})
+		json.NewEncoder(w).Encode(&models.Account{PUUID: "test", GameName: "Test", TagLine: "1234"})
 	}))
 	defer server.Close()
 
@@ -312,7 +311,7 @@ func TestClient_WithRateLimiter(t *testing.T) {
 
 	// First two requests should succeed immediately
 	for i := 0; i < 2; i++ {
-		_, err := client.GetSummonerByName(context.Background(), riot.PlatformEUW1, "Test")
+		_, err := client.GetAccountByRiotID(context.Background(), riot.RegionEurope, "Test", "1234")
 		if err != nil {
 			t.Fatalf("request %d failed: %v", i+1, err)
 		}
@@ -322,7 +321,7 @@ func TestClient_WithRateLimiter(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
 
-	_, err := client.GetSummonerByName(ctx, riot.PlatformEUW1, "Test")
+	_, err := client.GetAccountByRiotID(ctx, riot.RegionEurope, "Test", "1234")
 	if !errors.Is(err, context.DeadlineExceeded) {
 		t.Errorf("expected DeadlineExceeded, got %v", err)
 	}

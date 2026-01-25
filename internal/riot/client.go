@@ -61,18 +61,14 @@ func NewClient(apiKey string, opts ...ClientOption) *APIClient {
 	return c
 }
 
-// GetSummonerByName fetches a summoner by their name.
-func (c *APIClient) GetSummonerByName(ctx context.Context, region, name string) (*models.Summoner, error) {
-	if !isValidPlatform(region) {
-		return nil, ErrInvalidRegion
-	}
-
-	path := fmt.Sprintf("/lol/summoner/v4/summoners/by-name/%s", url.PathEscape(name))
-	var summoner models.Summoner
-	if err := c.get(ctx, region, path, &summoner); err != nil {
+// GetAccountByRiotID fetches an account by Riot ID (gameName#tagLine).
+func (c *APIClient) GetAccountByRiotID(ctx context.Context, region, gameName, tagLine string) (*models.Account, error) {
+	path := fmt.Sprintf("/riot/account/v1/accounts/by-riot-id/%s/%s", url.PathEscape(gameName), url.PathEscape(tagLine))
+	var account models.Account
+	if err := c.getRegional(ctx, region, path, &account); err != nil {
 		return nil, err
 	}
-	return &summoner, nil
+	return &account, nil
 }
 
 // GetSummonerByPUUID fetches a summoner by their PUUID.
