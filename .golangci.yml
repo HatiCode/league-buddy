@@ -12,6 +12,7 @@ linters:
         - (io.Closer).Close
         - (net/http.ResponseWriter).Write
         - (*encoding/json.Encoder).Encode
+        - (*github.com/HatiCode/league-buddy/internal/store.PostgresStore).Close
   exclusions:
     rules:
       - path: _test\.go

@@ -30,9 +30,9 @@ type TimelineParticipant struct {
 
 // TimelineFrame represents a snapshot of game state at a specific time.
 type TimelineFrame struct {
-	Events            []TimelineEvent           `json:"events"`
+	Events            []TimelineEvent             `json:"events"`
 	ParticipantFrames map[string]ParticipantFrame `json:"participantFrames"`
-	Timestamp         int64                     `json:"timestamp"`
+	Timestamp         int64                       `json:"timestamp"`
 }
 
 // TimelineEvent represents a game event.
@@ -42,41 +42,41 @@ type TimelineEvent struct {
 	Type          string `json:"type"`
 
 	// Optional fields depending on event type
-	ParticipantID       int    `json:"participantId,omitempty"`
-	KillerID            int    `json:"killerId,omitempty"`
-	VictimID            int    `json:"victimId,omitempty"`
-	AssistingParticipantIDs []int `json:"assistingParticipantIds,omitempty"`
-	Position            *Position `json:"position,omitempty"`
-	ItemID              int    `json:"itemId,omitempty"`
-	SkillSlot           int    `json:"skillSlot,omitempty"`
-	LevelUpType         string `json:"levelUpType,omitempty"`
-	WardType            string `json:"wardType,omitempty"`
-	CreatorID           int    `json:"creatorId,omitempty"`
-	BuildingType        string `json:"buildingType,omitempty"`
-	TowerType           string `json:"towerType,omitempty"`
-	LaneType            string `json:"laneType,omitempty"`
-	TeamID              int    `json:"teamId,omitempty"`
-	MonsterType         string `json:"monsterType,omitempty"`
-	MonsterSubType      string `json:"monsterSubType,omitempty"`
-	KillerTeamID        int    `json:"killerTeamId,omitempty"`
-	Bounty              int    `json:"bounty,omitempty"`
-	KillStreakLength    int    `json:"killStreakLength,omitempty"`
+	ParticipantID           int       `json:"participantId,omitempty"`
+	KillerID                int       `json:"killerId,omitempty"`
+	VictimID                int       `json:"victimId,omitempty"`
+	AssistingParticipantIDs []int     `json:"assistingParticipantIds,omitempty"`
+	Position                *Position `json:"position,omitempty"`
+	ItemID                  int       `json:"itemId,omitempty"`
+	SkillSlot               int       `json:"skillSlot,omitempty"`
+	LevelUpType             string    `json:"levelUpType,omitempty"`
+	WardType                string    `json:"wardType,omitempty"`
+	CreatorID               int       `json:"creatorId,omitempty"`
+	BuildingType            string    `json:"buildingType,omitempty"`
+	TowerType               string    `json:"towerType,omitempty"`
+	LaneType                string    `json:"laneType,omitempty"`
+	TeamID                  int       `json:"teamId,omitempty"`
+	MonsterType             string    `json:"monsterType,omitempty"`
+	MonsterSubType          string    `json:"monsterSubType,omitempty"`
+	KillerTeamID            int       `json:"killerTeamId,omitempty"`
+	Bounty                  int       `json:"bounty,omitempty"`
+	KillStreakLength        int       `json:"killStreakLength,omitempty"`
 }
 
 // ParticipantFrame represents a participant's state at a frame.
 type ParticipantFrame struct {
-	ChampionStats             ChampionStats `json:"championStats"`
-	CurrentGold               int           `json:"currentGold"`
-	DamageStats               DamageStats   `json:"damageStats"`
-	GoldPerSecond             int           `json:"goldPerSecond"`
-	JungleMinionsKilled       int           `json:"jungleMinionsKilled"`
-	Level                     int           `json:"level"`
-	MinionsKilled             int           `json:"minionsKilled"`
-	ParticipantID             int           `json:"participantId"`
-	Position                  Position      `json:"position"`
-	TimeEnemySpentControlled  int           `json:"timeEnemySpentControlled"`
-	TotalGold                 int           `json:"totalGold"`
-	XP                        int           `json:"xp"`
+	ChampionStats            ChampionStats `json:"championStats"`
+	CurrentGold              int           `json:"currentGold"`
+	DamageStats              DamageStats   `json:"damageStats"`
+	GoldPerSecond            int           `json:"goldPerSecond"`
+	JungleMinionsKilled      int           `json:"jungleMinionsKilled"`
+	Level                    int           `json:"level"`
+	MinionsKilled            int           `json:"minionsKilled"`
+	ParticipantID            int           `json:"participantId"`
+	Position                 Position      `json:"position"`
+	TimeEnemySpentControlled int           `json:"timeEnemySpentControlled"`
+	TotalGold                int           `json:"totalGold"`
+	XP                       int           `json:"xp"`
 }
 
 // ChampionStats represents champion statistics at a frame.
@@ -110,18 +110,18 @@ type ChampionStats struct {
 
 // DamageStats represents damage statistics at a frame.
 type DamageStats struct {
-	MagicDamageDone              int `json:"magicDamageDone"`
-	MagicDamageDoneToChampions   int `json:"magicDamageDoneToChampions"`
-	MagicDamageTaken             int `json:"magicDamageTaken"`
-	PhysicalDamageDone           int `json:"physicalDamageDone"`
+	MagicDamageDone               int `json:"magicDamageDone"`
+	MagicDamageDoneToChampions    int `json:"magicDamageDoneToChampions"`
+	MagicDamageTaken              int `json:"magicDamageTaken"`
+	PhysicalDamageDone            int `json:"physicalDamageDone"`
 	PhysicalDamageDoneToChampions int `json:"physicalDamageDoneToChampions"`
-	PhysicalDamageTaken          int `json:"physicalDamageTaken"`
-	TotalDamageDone              int `json:"totalDamageDone"`
-	TotalDamageDoneToChampions   int `json:"totalDamageDoneToChampions"`
-	TotalDamageTaken             int `json:"totalDamageTaken"`
-	TrueDamageDone               int `json:"trueDamageDone"`
-	TrueDamageDoneToChampions    int `json:"trueDamageDoneToChampions"`
-	TrueDamageTaken              int `json:"trueDamageTaken"`
+	PhysicalDamageTaken           int `json:"physicalDamageTaken"`
+	TotalDamageDone               int `json:"totalDamageDone"`
+	TotalDamageDoneToChampions    int `json:"totalDamageDoneToChampions"`
+	TotalDamageTaken              int `json:"totalDamageTaken"`
+	TrueDamageDone                int `json:"trueDamageDone"`
+	TrueDamageDoneToChampions     int `json:"trueDamageDoneToChampions"`
+	TrueDamageTaken               int `json:"trueDamageTaken"`
 }
 
 // Position represents a coordinate on the map.
