@@ -5,7 +5,7 @@ import "context"
 // SummonerReader retrieves summoner data.
 type SummonerReader interface {
 	GetSummonerByPUUID(ctx context.Context, puuid string) (*Summoner, error)
-	GetSummonerByName(ctx context.Context, platform, name string) (*Summoner, error)
+	GetSummonerByRiotID(ctx context.Context, platform, gameName, tagLine string) (*Summoner, error)
 }
 
 // SummonerWriter persists summoner data.

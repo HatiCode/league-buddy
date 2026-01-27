@@ -8,25 +8,28 @@ import (
 )
 
 func TestSummonerFromAPI(t *testing.T) {
+	apiAccount := &models.Account{
+		PUUID:    "puuid-12345",
+		GameName: "TestPlayer",
+		TagLine:  "EUW",
+	}
 	apiSummoner := &models.Summoner{
-		ID:            "encrypted-id",
-		AccountID:     "account-id",
 		PUUID:         "puuid-12345",
-		Name:          "TestPlayer",
 		ProfileIconID: 1234,
+		RevisionDate:  1700000000000,
 		SummonerLevel: 100,
 	}
 
-	result := store.SummonerFromAPI(apiSummoner, "euw1")
+	result := store.SummonerFromAPI(apiAccount, apiSummoner, "euw1")
 
 	if result.PUUID != apiSummoner.PUUID {
 		t.Errorf("expected PUUID %s, got %s", apiSummoner.PUUID, result.PUUID)
 	}
-	if result.SummonerID != apiSummoner.ID {
-		t.Errorf("expected SummonerID %s, got %s", apiSummoner.ID, result.SummonerID)
+	if result.GameName != apiAccount.GameName {
+		t.Errorf("expected GameName %s, got %s", apiAccount.GameName, result.GameName)
 	}
-	if result.Name != apiSummoner.Name {
-		t.Errorf("expected Name %s, got %s", apiSummoner.Name, result.Name)
+	if result.TagLine != apiAccount.TagLine {
+		t.Errorf("expected TagLine %s, got %s", apiAccount.TagLine, result.TagLine)
 	}
 	if result.Platform != "euw1" {
 		t.Errorf("expected Platform euw1, got %s", result.Platform)
@@ -37,12 +40,16 @@ func TestSummonerFromAPI(t *testing.T) {
 	if result.SummonerLevel != apiSummoner.SummonerLevel {
 		t.Errorf("expected SummonerLevel %d, got %d", apiSummoner.SummonerLevel, result.SummonerLevel)
 	}
+	if result.RevisionDate != apiSummoner.RevisionDate {
+		t.Errorf("expected RevisionDate %d, got %d", apiSummoner.RevisionDate, result.RevisionDate)
+	}
 }
 
 func TestSummoner_ApplyLeagueEntry(t *testing.T) {
 	summoner := &store.Summoner{
-		PUUID: "puuid-12345",
-		Name:  "TestPlayer",
+		PUUID:    "puuid-12345",
+		GameName: "TestPlayer",
+		TagLine:  "EUW",
 	}
 
 	entry := &models.LeagueEntry{

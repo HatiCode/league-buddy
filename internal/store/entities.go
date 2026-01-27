@@ -6,11 +6,12 @@ import "time"
 type Summoner struct {
 	ID            int64     `db:"id"`
 	PUUID         string    `db:"puuid"`
-	SummonerID    string    `db:"summoner_id"`
-	Name          string    `db:"name"`
+	GameName      string    `db:"game_name"`
+	TagLine       string    `db:"tag_line"`
 	Platform      string    `db:"platform"`
 	ProfileIconID int       `db:"profile_icon_id"`
 	SummonerLevel int64     `db:"summoner_level"`
+	RevisionDate  int64     `db:"revision_date"`
 	Tier          string    `db:"tier"`
 	Rank          string    `db:"rank"`
 	LeaguePoints  int       `db:"league_points"`

@@ -2,11 +2,9 @@ package models
 
 // Summoner represents a League of Legends player identity.
 type Summoner struct {
-	ID            string `json:"id"`
-	AccountID     string `json:"accountId"`
 	PUUID         string `json:"puuid"`
-	Name          string `json:"name"`
 	ProfileIconID int    `json:"profileIconId"`
+	RevisionDate  int64  `json:"revisionDate"`
 	SummonerLevel int64  `json:"summonerLevel"`
 }
 

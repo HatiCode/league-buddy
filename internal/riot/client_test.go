@@ -90,11 +90,9 @@ func TestGetAccountByRiotID_Unauthorized(t *testing.T) {
 
 func TestGetSummonerByPUUID_Success(t *testing.T) {
 	expected := &models.Summoner{
-		ID:            "encrypted-summoner-id",
-		AccountID:     "encrypted-account-id",
 		PUUID:         "puuid-12345",
-		Name:          "Faker",
 		ProfileIconID: 4567,
+		RevisionDate:  1700000000000,
 		SummonerLevel: 500,
 	}
 
@@ -114,8 +112,11 @@ func TestGetSummonerByPUUID_Success(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if summoner.Name != expected.Name {
-		t.Errorf("expected Name %s, got %s", expected.Name, summoner.Name)
+	if summoner.PUUID != expected.PUUID {
+		t.Errorf("expected PUUID %s, got %s", expected.PUUID, summoner.PUUID)
+	}
+	if summoner.SummonerLevel != expected.SummonerLevel {
+		t.Errorf("expected SummonerLevel %d, got %d", expected.SummonerLevel, summoner.SummonerLevel)
 	}
 }
 

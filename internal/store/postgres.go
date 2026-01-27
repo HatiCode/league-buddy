@@ -39,8 +39,8 @@ func (s *PostgresStore) DB() *sql.DB {
 func (s *PostgresStore) GetSummonerByPUUID(ctx context.Context, puuid string) (*Summoner, error) {
 	var summoner Summoner
 	err := s.db.GetContext(ctx, &summoner, `
-		SELECT id, puuid, summoner_id, name, platform, profile_icon_id, summoner_level,
-		       tier, rank, league_points, created_at, updated_at
+		SELECT id, puuid, game_name, tag_line, platform, profile_icon_id, summoner_level,
+		       revision_date, tier, rank, league_points, created_at, updated_at
 		FROM summoners WHERE puuid = $1
 	`, puuid)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -52,13 +52,13 @@ func (s *PostgresStore) GetSummonerByPUUID(ctx context.Context, puuid string) (*
 	return &summoner, nil
 }
 
-func (s *PostgresStore) GetSummonerByName(ctx context.Context, platform, name string) (*Summoner, error) {
+func (s *PostgresStore) GetSummonerByRiotID(ctx context.Context, platform, gameName, tagLine string) (*Summoner, error) {
 	var summoner Summoner
 	err := s.db.GetContext(ctx, &summoner, `
-		SELECT id, puuid, summoner_id, name, platform, profile_icon_id, summoner_level,
-		       tier, rank, league_points, created_at, updated_at
-		FROM summoners WHERE platform = $1 AND LOWER(name) = LOWER($2)
-	`, platform, name)
+		SELECT id, puuid, game_name, tag_line, platform, profile_icon_id, summoner_level,
+		       revision_date, tier, rank, league_points, created_at, updated_at
+		FROM summoners WHERE platform = $1 AND LOWER(game_name) = LOWER($2) AND LOWER(tag_line) = LOWER($3)
+	`, platform, gameName, tagLine)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, ErrNotFound
 	}
@@ -70,19 +70,20 @@ func (s *PostgresStore) GetSummonerByName(ctx context.Context, platform, name st
 
 func (s *PostgresStore) UpsertSummoner(ctx context.Context, summoner *Summoner) error {
 	_, err := s.db.ExecContext(ctx, `
-		INSERT INTO summoners (puuid, summoner_id, name, platform, profile_icon_id, summoner_level, tier, rank, league_points, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+		INSERT INTO summoners (puuid, game_name, tag_line, platform, profile_icon_id, summoner_level, revision_date, tier, rank, league_points, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
 		ON CONFLICT (puuid) DO UPDATE SET
-			summoner_id = EXCLUDED.summoner_id,
-			name = EXCLUDED.name,
+			game_name = EXCLUDED.game_name,
+			tag_line = EXCLUDED.tag_line,
 			profile_icon_id = EXCLUDED.profile_icon_id,
 			summoner_level = EXCLUDED.summoner_level,
+			revision_date = EXCLUDED.revision_date,
 			tier = EXCLUDED.tier,
 			rank = EXCLUDED.rank,
 			league_points = EXCLUDED.league_points,
 			updated_at = NOW()
-	`, summoner.PUUID, summoner.SummonerID, summoner.Name, summoner.Platform,
-		summoner.ProfileIconID, summoner.SummonerLevel, summoner.Tier, summoner.Rank, summoner.LeaguePoints)
+	`, summoner.PUUID, summoner.GameName, summoner.TagLine, summoner.Platform,
+		summoner.ProfileIconID, summoner.SummonerLevel, summoner.RevisionDate, summoner.Tier, summoner.Rank, summoner.LeaguePoints)
 	return err
 }
 

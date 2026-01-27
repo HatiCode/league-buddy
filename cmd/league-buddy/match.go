@@ -8,10 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/HatiCode/league-buddy/internal/store"
 	"github.com/spf13/cobra"
 )
 
 var matchRiotID string
+var matchSave bool
 
 var matchCmd = &cobra.Command{
 	Use:   "match",
@@ -58,6 +60,15 @@ var matchCmd = &cobra.Command{
 		matchDuration := time.Since(matchStart)
 		totalDuration := time.Since(start)
 
+		// Save to DB if enabled
+		if matchSave && dataStore != nil {
+			matchEntity := store.MatchFromAPI(match)
+			participants := store.ParticipantsFromAPI(match)
+			if err := dataStore.SaveMatch(ctx, matchEntity, participants); err != nil {
+				return fmt.Errorf("failed to save match: %w", err)
+			}
+		}
+
 		// Output combined info
 		output := struct {
 			MatchID string `json:"matchId"`
@@ -85,5 +96,6 @@ var matchCmd = &cobra.Command{
 
 func init() {
 	matchCmd.Flags().StringVar(&matchRiotID, "riot-id", "", "Riot ID (format: gameName#tagLine, e.g., Faker#KR1)")
+	matchCmd.Flags().BoolVar(&matchSave, "save", false, "Save match data to DB")
 	getCmd.AddCommand(matchCmd)
 }

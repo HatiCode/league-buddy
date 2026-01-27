@@ -31,11 +31,12 @@ func TestPostgres_UpsertAndGetSummoner(t *testing.T) {
 
 	summoner := &store.Summoner{
 		PUUID:         "test-puuid-" + time.Now().Format("20060102150405"),
-		SummonerID:    "test-summoner-id",
-		Name:          "TestPlayer",
+		GameName:      "TestPlayer",
+		TagLine:       "EUW",
 		Platform:      "euw1",
 		ProfileIconID: 1234,
 		SummonerLevel: 100,
+		RevisionDate:  1700000000000,
 		Tier:          "GOLD",
 		Rank:          "II",
 		LeaguePoints:  50,
@@ -52,8 +53,8 @@ func TestPostgres_UpsertAndGetSummoner(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetSummonerByPUUID failed: %v", err)
 	}
-	if retrieved.Name != summoner.Name {
-		t.Errorf("expected Name %s, got %s", summoner.Name, retrieved.Name)
+	if retrieved.GameName != summoner.GameName {
+		t.Errorf("expected GameName %s, got %s", summoner.GameName, retrieved.GameName)
 	}
 	if retrieved.ID == 0 {
 		t.Error("expected ID to be set")
@@ -77,7 +78,7 @@ func TestPostgres_UpsertAndGetSummoner(t *testing.T) {
 	}
 }
 
-func TestPostgres_GetSummonerByName(t *testing.T) {
+func TestPostgres_GetSummonerByRiotID(t *testing.T) {
 	dsn := skipIfNoDatabase(t)
 	ctx := context.Background()
 
@@ -87,9 +88,11 @@ func TestPostgres_GetSummonerByName(t *testing.T) {
 	}
 	defer db.Close()
 
+	ts := time.Now().Format("150405")
 	summoner := &store.Summoner{
-		PUUID:    "test-puuid-byname-" + time.Now().Format("20060102150405"),
-		Name:     "UniqueTestName" + time.Now().Format("150405"),
+		PUUID:    "test-puuid-byriotid-" + time.Now().Format("20060102150405"),
+		GameName: "UniqueTest" + ts,
+		TagLine:  "EUW",
 		Platform: "euw1",
 	}
 
@@ -98,9 +101,9 @@ func TestPostgres_GetSummonerByName(t *testing.T) {
 		t.Fatalf("UpsertSummoner failed: %v", err)
 	}
 
-	retrieved, err := db.GetSummonerByName(ctx, "euw1", summoner.Name)
+	retrieved, err := db.GetSummonerByRiotID(ctx, "euw1", summoner.GameName, summoner.TagLine)
 	if err != nil {
-		t.Fatalf("GetSummonerByName failed: %v", err)
+		t.Fatalf("GetSummonerByRiotID failed: %v", err)
 	}
 	if retrieved.PUUID != summoner.PUUID {
 		t.Errorf("expected PUUID %s, got %s", summoner.PUUID, retrieved.PUUID)
@@ -205,7 +208,8 @@ func TestPostgres_LinkSummonerMatch(t *testing.T) {
 	// Create summoner
 	summoner := &store.Summoner{
 		PUUID:    "link-test-puuid-" + time.Now().Format("20060102150405"),
-		Name:     "LinkTestPlayer",
+		GameName: "LinkTestPlayer",
+		TagLine:  "EUW",
 		Platform: "euw1",
 	}
 	err = db.UpsertSummoner(ctx, summoner)
@@ -259,7 +263,8 @@ func TestPostgres_UnlinkOldestMatches(t *testing.T) {
 	ts := time.Now().Format("20060102150405")
 	summoner := &store.Summoner{
 		PUUID:    "unlink-test-puuid-" + ts,
-		Name:     "UnlinkTestPlayer",
+		GameName: "UnlinkTestPlayer",
+		TagLine:  "EUW",
 		Platform: "euw1",
 	}
 	err = db.UpsertSummoner(ctx, summoner)

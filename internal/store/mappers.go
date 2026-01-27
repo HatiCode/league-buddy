@@ -6,15 +6,16 @@ import (
 	"github.com/HatiCode/league-buddy/internal/models"
 )
 
-// SummonerFromAPI converts a Riot API summoner response to a store entity.
-func SummonerFromAPI(s *models.Summoner, platform string) *Summoner {
+// SummonerFromAPI converts Riot API account and summoner responses to a store entity.
+func SummonerFromAPI(account *models.Account, summoner *models.Summoner, platform string) *Summoner {
 	return &Summoner{
-		PUUID:         s.PUUID,
-		SummonerID:    s.ID,
-		Name:          s.Name,
+		PUUID:         summoner.PUUID,
+		GameName:      account.GameName,
+		TagLine:       account.TagLine,
 		Platform:      platform,
-		ProfileIconID: s.ProfileIconID,
-		SummonerLevel: s.SummonerLevel,
+		ProfileIconID: summoner.ProfileIconID,
+		SummonerLevel: summoner.SummonerLevel,
+		RevisionDate:  summoner.RevisionDate,
 	}
 }
 

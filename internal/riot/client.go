@@ -117,6 +117,22 @@ func (c *APIClient) GetMatch(ctx context.Context, platform, matchID string) (*mo
 	return &match, nil
 }
 
+// GetMatchTimeline fetches timeline data for a match.
+func (c *APIClient) GetMatchTimeline(ctx context.Context, platform, matchID string) (*models.Timeline, error) {
+	if !isValidPlatform(platform) {
+		return nil, ErrInvalidRegion
+	}
+
+	region := PlatformToRegion[platform]
+	path := fmt.Sprintf("/lol/match/v5/matches/%s/timeline", matchID)
+
+	var timeline models.Timeline
+	if err := c.getRegional(ctx, region, path, &timeline); err != nil {
+		return nil, err
+	}
+	return &timeline, nil
+}
+
 // GetLeagueEntries fetches ranked entries for a summoner.
 func (c *APIClient) GetLeagueEntries(ctx context.Context, region, summonerID string) ([]models.LeagueEntry, error) {
 	if !isValidPlatform(region) {

@@ -8,10 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/HatiCode/league-buddy/internal/store"
 	"github.com/spf13/cobra"
 )
 
 var riotID string
+var summonerSave bool
 
 var summonerCmd = &cobra.Command{
 	Use:   "summoner",
@@ -47,6 +49,12 @@ var summonerCmd = &cobra.Command{
 		summonerDuration := time.Since(summonerStart)
 		totalDuration := time.Since(start)
 
+		if summonerSave && dataStore != nil {
+			entity := store.SummonerFromAPI(account, summoner, platform)
+			if err := dataStore.UpsertSummoner(ctx, entity); err != nil {
+				return fmt.Errorf("failed to save summoner: %w", err)
+			}
+		}
 		// Output combined info
 		output := struct {
 			Account  any    `json:"account"`
@@ -76,5 +84,6 @@ type timing struct {
 
 func init() {
 	summonerCmd.Flags().StringVar(&riotID, "riot-id", "", "Riot ID (format: gameName#tagLine, e.g., Faker#KR1)")
+	summonerCmd.Flags().BoolVar(&summonerSave, "save", false, "Save summoner data to DB")
 	getCmd.AddCommand(summonerCmd)
 }

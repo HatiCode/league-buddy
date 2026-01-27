@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"os"
 	"time"
 
 	"github.com/HatiCode/league-buddy/internal/riot"
+	"github.com/HatiCode/league-buddy/internal/store"
 	"github.com/HatiCode/league-buddy/pkg/ratelimit"
 	"github.com/spf13/cobra"
 )
@@ -13,8 +15,10 @@ var (
 	apiKey   string
 	platform string
 	region   string // Derived from platform (americas, asia, europe, sea)
+	dbURL    string
 
 	riotClient *riot.APIClient
+	dataStore  store.Store
 )
 
 var rootCmd = &cobra.Command{
@@ -45,6 +49,17 @@ var rootCmd = &cobra.Command{
 			}
 		}
 
+		if dbURL == "" {
+			dbURL = os.Getenv("DATABASE_URL")
+		}
+		if dbURL != "" {
+			var err error
+			dataStore, err = store.NewPostgresStore(context.Background(), dbURL)
+			if err != nil {
+				cmd.PrintErrf("Warning: failed to connect to database: %v\n", err)
+			}
+		}
+
 		return nil
 	},
 }
@@ -53,4 +68,5 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&apiKey, "api-key", "", "Riot API key (or set RIOT_API_KEY env var)")
 	rootCmd.PersistentFlags().StringVar(&platform, "platform", "euw1", "Platform for summoner data (euw1, na1, kr, etc.)")
 	rootCmd.PersistentFlags().StringVar(&region, "region", "", "Region for account lookup (americas, asia, europe). Defaults based on platform.")
+	rootCmd.PersistentFlags().StringVar(&dbURL, "db-url", "", "PostgreSQL connection URL (or set DATABASE_URL env var)")
 }

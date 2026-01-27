@@ -20,6 +20,7 @@ type SummonerFetcher interface {
 type MatchFetcher interface {
 	GetMatchIDs(ctx context.Context, region, puuid string, count int) ([]string, error)
 	GetMatch(ctx context.Context, region, matchID string) (*models.Match, error)
+	GetMatchTimeline(ctx context.Context, region, matchID string) (*models.Timeline, error)
 }
 
 // LeagueFetcher retrieves ranked/league information.
