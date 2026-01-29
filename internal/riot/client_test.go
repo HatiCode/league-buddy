@@ -206,8 +206,7 @@ func TestGetMatch_Success(t *testing.T) {
 func TestGetLeagueEntries_Success(t *testing.T) {
 	expected := []models.LeagueEntry{
 		{
-			SummonerID:   "encrypted-summoner-id",
-			SummonerName: "Faker",
+			PUUID:        "puuid-12345",
 			QueueType:    models.QueueRankedSolo,
 			Tier:         "CHALLENGER",
 			Rank:         "I",
@@ -218,7 +217,7 @@ func TestGetLeagueEntries_Success(t *testing.T) {
 	}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/lol/league/v4/entries/by-summoner/encrypted-summoner-id" {
+		if r.URL.Path != "/lol/league/v4/entries/by-puuid/puuid-12345" {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
 
@@ -228,7 +227,7 @@ func TestGetLeagueEntries_Success(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
-	entries, err := client.GetLeagueEntries(context.Background(), riot.PlatformEUW1, "encrypted-summoner-id")
+	entries, err := client.GetLeagueEntries(context.Background(), riot.PlatformEUW1, "puuid-12345")
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

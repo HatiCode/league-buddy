@@ -133,13 +133,13 @@ func (c *APIClient) GetMatchTimeline(ctx context.Context, platform, matchID stri
 	return &timeline, nil
 }
 
-// GetLeagueEntries fetches ranked entries for a summoner.
-func (c *APIClient) GetLeagueEntries(ctx context.Context, region, summonerID string) ([]models.LeagueEntry, error) {
+// GetLeagueEntries fetches ranked entries for a player by PUUID.
+func (c *APIClient) GetLeagueEntries(ctx context.Context, region, puuid string) ([]models.LeagueEntry, error) {
 	if !isValidPlatform(region) {
 		return nil, ErrInvalidRegion
 	}
 
-	path := fmt.Sprintf("/lol/league/v4/entries/by-summoner/%s", summonerID)
+	path := fmt.Sprintf("/lol/league/v4/entries/by-puuid/%s", puuid)
 	var entries []models.LeagueEntry
 	if err := c.get(ctx, region, path, &entries); err != nil {
 		return nil, err

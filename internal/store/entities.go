@@ -38,11 +38,10 @@ type Participant struct {
 	MatchID              int64  `db:"match_id"`
 	PUUID                string `db:"puuid"`
 	SummonerName         string `db:"summoner_name"`
-	ChampionID           int    `db:"champion_id"`
 	ChampionName         string `db:"champion_name"`
-	TeamID               int    `db:"team_id"`
 	TeamPosition         string `db:"team_position"`
-	Win                  bool   `db:"win"`
+	ChampionID           int    `db:"champion_id"`
+	TeamID               int    `db:"team_id"`
 	Kills                int    `db:"kills"`
 	Deaths               int    `db:"deaths"`
 	Assists              int    `db:"assists"`
@@ -58,6 +57,7 @@ type Participant struct {
 	DragonKills          int    `db:"dragon_kills"`
 	BaronKills           int    `db:"baron_kills"`
 	TurretKills          int    `db:"turret_kills"`
+	Win                  bool   `db:"win"`
 	FirstBloodKill       bool   `db:"first_blood_kill"`
 	FirstBloodAssist     bool   `db:"first_blood_assist"`
 }

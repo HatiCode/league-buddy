@@ -46,7 +46,7 @@ func ParticipantsFromAPI(m *models.Match) []Participant {
 	for _, p := range m.Info.Participants {
 		participants = append(participants, Participant{
 			PUUID:                p.PUUID,
-			SummonerName:         p.SummonerName,
+			SummonerName:         p.RiotIdGameName,
 			ChampionID:           p.ChampionID,
 			ChampionName:         p.ChampionName,
 			TeamID:               p.TeamID,

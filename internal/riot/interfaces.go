@@ -25,7 +25,7 @@ type MatchFetcher interface {
 
 // LeagueFetcher retrieves ranked/league information.
 type LeagueFetcher interface {
-	GetLeagueEntries(ctx context.Context, region, summonerID string) ([]models.LeagueEntry, error)
+	GetLeagueEntries(ctx context.Context, region, puuid string) ([]models.LeagueEntry, error)
 }
 
 // Client combines all Riot API capabilities.
