@@ -15,12 +15,12 @@ import (
 )
 
 var (
-	coachRiotID     string
-	coachMatchCount int
-	coachProvider   string
-	coachLLMKey     string
-	coachModel      string
-	coachMaxTokens  int64
+	coachRiotID      string
+	coachMatchCount  int
+	coachProvider    string
+	coachLLMKey      string
+	coachModel       string
+	coachMaxTokens   int64
 	coachTemperature float64
 )
 
@@ -145,8 +145,8 @@ var coachCmd = &cobra.Command{
 
 		output := struct {
 			Player   coachPlayerInfo            `json:"player"`
-			Coaching *coaching.CoachingResponse  `json:"coaching"`
-			Timing   coachTimingInfo             `json:"timing"`
+			Coaching *coaching.CoachingResponse `json:"coaching"`
+			Timing   coachTimingInfo            `json:"timing"`
 		}{
 			Player: coachPlayerInfo{
 				RiotID:  fmt.Sprintf("%s#%s", account.GameName, account.TagLine),

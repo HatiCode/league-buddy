@@ -62,8 +62,8 @@ func NewClaudeClient(cfg ClaudeConfig) (*ClaudeClient, error) {
 
 func (c *ClaudeClient) Complete(ctx context.Context, system string, user string) (string, error) {
 	params := anthropic.MessageNewParams{
-		Model:     c.model,
-		MaxTokens: c.maxTokens,
+		Model:       c.model,
+		MaxTokens:   c.maxTokens,
 		Temperature: param.NewOpt(c.temperature),
 		System: []anthropic.TextBlockParam{
 			{Text: system},

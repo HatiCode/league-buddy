@@ -12,11 +12,11 @@ import (
 
 // TrendPoint represents a single coaching session as a data point for progress tracking.
 type TrendPoint struct {
-	SessionDate time.Time              `json:"sessionDate"`
-	MatchCount  int                    `json:"matchCount"`
-	WinRate     float64                `json:"winRate"`
-	Tier        string                 `json:"tier,omitempty"`
-	Rank        string                 `json:"rank,omitempty"`
+	SessionDate time.Time               `json:"sessionDate"`
+	MatchCount  int                     `json:"matchCount"`
+	WinRate     float64                 `json:"winRate"`
+	Tier        string                  `json:"tier,omitempty"`
+	Rank        string                  `json:"rank,omitempty"`
 	Averages    analysis.AverageMetrics `json:"averages"`
 }
 
