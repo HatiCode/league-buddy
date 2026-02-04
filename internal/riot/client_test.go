@@ -139,7 +139,7 @@ func TestGetMatchIDs_Success(t *testing.T) {
 	defer server.Close()
 
 	client := riot.NewClient("test-api-key", riot.WithBaseURL(server.URL))
-	matchIDs, err := client.GetMatchIDs(context.Background(), riot.PlatformEUW1, "puuid-12345", 5)
+	matchIDs, err := client.GetMatchIDs(context.Background(), riot.PlatformEUW1, "puuid-12345", 5, 0)
 
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)

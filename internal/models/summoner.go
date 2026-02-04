@@ -33,8 +33,11 @@ type MiniSeries struct {
 	Wins     int    `json:"wins"`
 }
 
-// QueueType constants for ranked queues.
+// QueueType constants for ranked queues (league API).
 const (
 	QueueRankedSolo = "RANKED_SOLO_5x5"
 	QueueRankedFlex = "RANKED_FLEX_SR"
 )
+
+// QueueIDRankedSolo is the match API queue ID for Ranked Solo/Duo.
+const QueueIDRankedSolo = 420

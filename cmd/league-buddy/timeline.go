@@ -40,7 +40,7 @@ var timelineCmd = &cobra.Command{
 				return fmt.Errorf("failed to get account: %w", err)
 			}
 
-			matchIDs, err := riotClient.GetMatchIDs(ctx, platform, account.PUUID, 1)
+			matchIDs, err := riotClient.GetMatchIDs(ctx, platform, account.PUUID, 1, 0)
 			if err != nil {
 				return fmt.Errorf("failed to get match IDs: %w", err)
 			}

@@ -69,5 +69,16 @@ type SummonerMatch struct {
 	CreatedAt  time.Time `db:"created_at"`
 }
 
+// CoachingSession represents a stored coaching session with analysis snapshot.
+type CoachingSession struct {
+	ID            int64     `db:"id"`
+	PUUID         string    `db:"puuid"`
+	LatestMatchID string    `db:"latest_match_id"`
+	MatchIDs      []byte    `db:"match_ids"`
+	Analysis      []byte    `db:"analysis"`
+	Advice        string    `db:"advice"`
+	CreatedAt     time.Time `db:"created_at"`
+}
+
 // MaxMatchesPerSummoner is the maximum number of matches tracked per summoner.
 const MaxMatchesPerSummoner = 20

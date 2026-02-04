@@ -222,6 +222,49 @@ func (s *PostgresStore) UnlinkOldestMatches(ctx context.Context, summonerID int6
 	return err
 }
 
+// --- Coaching session operations ---
+
+func (s *PostgresStore) GetLatestCoachingSession(ctx context.Context, puuid string) (*CoachingSession, error) {
+	var session CoachingSession
+	err := s.db.GetContext(ctx, &session, `
+		SELECT id, puuid, latest_match_id, match_ids, analysis, advice, created_at
+		FROM coaching_sessions
+		WHERE puuid = $1
+		ORDER BY created_at DESC
+		LIMIT 1
+	`, puuid)
+	if errors.Is(err, sql.ErrNoRows) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &session, nil
+}
+
+func (s *PostgresStore) GetCoachingSessions(ctx context.Context, puuid string) ([]CoachingSession, error) {
+	var sessions []CoachingSession
+	err := s.db.SelectContext(ctx, &sessions, `
+		SELECT id, puuid, latest_match_id, match_ids, analysis, advice, created_at
+		FROM coaching_sessions
+		WHERE puuid = $1
+		ORDER BY created_at ASC
+	`, puuid)
+	if err != nil {
+		return nil, err
+	}
+	return sessions, nil
+}
+
+func (s *PostgresStore) SaveCoachingSession(ctx context.Context, session *CoachingSession) error {
+	return s.db.QueryRowxContext(ctx, `
+		INSERT INTO coaching_sessions (puuid, latest_match_id, match_ids, analysis, advice, created_at)
+		VALUES ($1, $2, $3, $4, $5, NOW())
+		RETURNING id, created_at
+	`, session.PUUID, session.LatestMatchID, session.MatchIDs, session.Analysis, session.Advice).
+		Scan(&session.ID, &session.CreatedAt)
+}
+
 // --- Cleanup operations ---
 
 func (s *PostgresStore) DeleteOrphanedMatches(ctx context.Context) (int64, error) {

@@ -85,14 +85,17 @@ func (c *APIClient) GetSummonerByPUUID(ctx context.Context, region, puuid string
 	return &summoner, nil
 }
 
-// GetMatchIDs fetches recent match IDs for a player.
-func (c *APIClient) GetMatchIDs(ctx context.Context, platform, puuid string, count int) ([]string, error) {
+// GetMatchIDs fetches recent match IDs for a player. Pass queue=0 for all queues.
+func (c *APIClient) GetMatchIDs(ctx context.Context, platform, puuid string, count, queue int) ([]string, error) {
 	if !isValidPlatform(platform) {
 		return nil, ErrInvalidRegion
 	}
 
 	region := PlatformToRegion[platform]
 	path := fmt.Sprintf("/lol/match/v5/matches/by-puuid/%s/ids?count=%s", puuid, strconv.Itoa(count))
+	if queue > 0 {
+		path += "&queue=" + strconv.Itoa(queue)
+	}
 
 	var matchIDs []string
 	if err := c.getRegional(ctx, region, path, &matchIDs); err != nil {

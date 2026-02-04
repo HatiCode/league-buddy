@@ -40,6 +40,23 @@ type MatchRepository interface {
 	MatchWriter
 }
 
+// CoachingSessionReader retrieves coaching session data.
+type CoachingSessionReader interface {
+	GetLatestCoachingSession(ctx context.Context, puuid string) (*CoachingSession, error)
+	GetCoachingSessions(ctx context.Context, puuid string) ([]CoachingSession, error)
+}
+
+// CoachingSessionWriter persists coaching session data.
+type CoachingSessionWriter interface {
+	SaveCoachingSession(ctx context.Context, session *CoachingSession) error
+}
+
+// CoachingSessionRepository combines read and write operations for coaching sessions.
+type CoachingSessionRepository interface {
+	CoachingSessionReader
+	CoachingSessionWriter
+}
+
 // CleanupService handles orphaned data removal.
 type CleanupService interface {
 	DeleteOrphanedMatches(ctx context.Context) (int64, error)
@@ -49,5 +66,6 @@ type CleanupService interface {
 type Store interface {
 	SummonerRepository
 	MatchRepository
+	CoachingSessionRepository
 	CleanupService
 }

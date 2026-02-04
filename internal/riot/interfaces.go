@@ -18,7 +18,7 @@ type SummonerFetcher interface {
 
 // MatchFetcher retrieves match data.
 type MatchFetcher interface {
-	GetMatchIDs(ctx context.Context, region, puuid string, count int) ([]string, error)
+	GetMatchIDs(ctx context.Context, region, puuid string, count, queue int) ([]string, error)
 	GetMatch(ctx context.Context, region, matchID string) (*models.Match, error)
 	GetMatchTimeline(ctx context.Context, region, matchID string) (*models.Timeline, error)
 }

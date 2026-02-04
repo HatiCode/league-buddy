@@ -42,7 +42,7 @@ var matchCmd = &cobra.Command{
 
 		// Step 2: Get latest match ID
 		matchIDsStart := time.Now()
-		matchIDs, err := riotClient.GetMatchIDs(ctx, platform, account.PUUID, 1)
+		matchIDs, err := riotClient.GetMatchIDs(ctx, platform, account.PUUID, 1, 0)
 		if err != nil {
 			return fmt.Errorf("failed to get match IDs: %w", err)
 		}
