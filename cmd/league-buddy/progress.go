@@ -68,7 +68,6 @@ var progressCmd = &cobra.Command{
 func renderGraphs(progress *coaching.PlayerProgress) {
 	fmt.Printf("Progress: %s#%s (%d sessions)\n\n", progress.GameName, progress.TagLine, progress.Sessions)
 
-	// Rank progression
 	fmt.Print("Rank:  ")
 	for i, tp := range progress.Trend {
 		if i > 0 {
@@ -77,7 +76,7 @@ func renderGraphs(progress *coaching.PlayerProgress) {
 		label := tp.Tier + " " + tp.Rank
 		fmt.Printf("%s (%s)", label, tp.SessionDate.Format("Jan 02"))
 	}
-	fmt.Println("\n")
+	fmt.Println()
 
 	type metricDef struct {
 		name   string
